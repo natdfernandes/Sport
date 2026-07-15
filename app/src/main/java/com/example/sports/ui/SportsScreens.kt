@@ -50,6 +50,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -79,10 +80,19 @@ import com.example.sports.utils.SportsContentType
  */
 @Composable
 fun SportsApp(
+    windowSize: WindowWidthSizeClass,
 ) {
     val viewModel: SportsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val navigationType: SportsContentType = SportsContentType.ListAndDetail
+    val navigationType: SportsContentType
+    when(windowSize){
+        WindowWidthSizeClass.Compact -> {
+            navigationType = SportsContentType.ListOnly
+        }
+        else -> {
+            navigationType = SportsContentType.ListAndDetail
+        }
+    }
 
     Scaffold(
         topBar = {
