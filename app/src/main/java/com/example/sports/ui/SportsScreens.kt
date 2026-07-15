@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,6 +44,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -130,11 +132,11 @@ fun SportsAppBar(
         title = {
             Text(
                 text =
-                if (!isShowingListPage) {
-                    stringResource(R.string.detail_fragment_label)
-                } else {
-                    stringResource(R.string.list_fragment_label)
-                }
+                    if (!isShowingListPage) {
+                        stringResource(R.string.detail_fragment_label)
+                    } else {
+                        stringResource(R.string.list_fragment_label)
+                    }
             )
         },
         navigationIcon = if (!isShowingListPage) {
@@ -342,6 +344,44 @@ private fun SportsDetail(
     }
 }
 
+@Composable
+fun SportsListAndDetails(
+    uiState: SportsUiState,
+    onSportSelected: (Sport) -> Unit,
+    contentPadding: PaddingValues
+) {
+    Row(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Box(
+            modifier = Modifier.weight(1f)
+        ) {
+            SportsList(
+                sports = uiState.sportsList,
+                onClick = onSportSelected,
+                contentPadding = contentPadding,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = dimensionResource(R.dimen.padding_medium),
+                        start = dimensionResource(R.dimen.padding_medium),
+                        end = dimensionResource(R.dimen.padding_medium),
+                    )
+            )
+        }
+
+        Box(
+            modifier = Modifier.weight(2f)
+        ) {
+            SportsDetail(
+                selectedSport = uiState.currentSport,
+                onBackPressed = {},
+                contentPadding = contentPadding
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun SportsListItemPreview() {
@@ -363,5 +403,21 @@ fun SportsListPreview() {
                 onClick = {},
             )
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 900)
+@Composable
+fun SportsListAndDetailsPreview() {
+    SportsTheme {
+        SportsListAndDetails(
+            uiState = SportsUiState(
+                sportsList = LocalSportsDataProvider.getSportsData(),
+                currentSport = LocalSportsDataProvider.defaultSport,
+                isShowingListPage = true
+            ),
+            onSportSelected = {},
+            contentPadding = PaddingValues(0.dp)
+        )
     }
 }
